@@ -1,0 +1,96 @@
+public class Sesja {
+ 
+    String[] egzaminy;
+    int zdane;
+    int niezdane;
+    int pozostale;
+    String[] terminy;
+ 
+    public Sesja(String[] egzaminy, String[] terminy) {
+        this.egzaminy = egzaminy;
+        this.terminy = terminy;
+        this.zdane = 0;
+        this.niezdane = 0;
+        this.pozostale = egzaminy.length;
+    }
+ 
+    public boolean Egzamin(String przedmiot) {
+        for (int i = 0; i < egzaminy.length; i++) {
+            if (egzaminy[i].equals(przedmiot)) {
+                Date data = new Date();
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    data = format.parse(terminy[i]);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+ 
+                if (data.before(new Date())) {
+                    pozostale--;
+                    zdane++;
+                    return true;
+                } else {
+                    pozostale--;
+                    niezdane++;
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+ 
+    public boolean CzySesjaOk() {
+        Date styczen = new Date();
+        Date luty = new Date();
+        try {
+            styczen = new SimpleDateFormat("yyyy-MM-dd").parse("2020-01-01");
+            luty = new SimpleDateFormat("yyyy-MM-dd").parse("2020-02-29");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+ 
+        int licznik = 0;
+        for (int i = 0; i < terminy.length; i++) {
+            Date data = new Date();
+            try {
+                data = new SimpleDateFormat("yyyy-MM-dd").parse(terminy[i]);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if (data.before(luty) && data.after(styczen)) {
+                licznik++;
+            }
+        }
+ 
+        if (terminy.length > 10 || licznik < 2) {
+            return false;
+        }
+ 
+        for (int i = 0; i < terminy.length; i++) {
+            for (int j = 0; j < terminy.length; j++) {
+                if (i != j) {
+                    if (terminy[i].equals(terminy[j])) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+ 
+    public static void main(String[] args) {
+ 
+        String[] egzaminy = {"Matematyka", "Biologia", "Fizyka"};
+        String[] terminy = {"2020-01-01", "2020-02-29", "2020-03-05"};
+ 
+        Sesja sesja = new Sesja(egzaminy, terminy);
+        boolean egz1 = sesja.Egzamin("Matematyka");
+        boolean egz2 = sesja.Egzamin("Biologia");
+        boolean sesjaOk = sesja.CzySesjaOk();
+ 
+        System.out.println("Egzamin Matematyka: " + egz1 + "; Egzamin Biologia: " + egz2);
+        System.out.println("Czy sesja jest ok? " + sesjaOk + "; zdane: " + sesja.zdane + "; niezdane: " + sesja.niezdane + "; pozostale: " + sesja.pozostale);
+ 
+    }
+ 
+}
